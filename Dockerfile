@@ -34,7 +34,7 @@ RUN dotnet publish "FleetApi.csproj" -c Release -o /app/publish /p:UseAppHost=fa
 # Безопасность (Attack Surface Reduction): Если хакер взломает этот контейнер, он не найдет там твоего исходного кода 
 # или инструментов сборки, с помощью которых можно скомпилировать вирус. 
 #К тому же этот образ весит около 200 МБ вместо 1 ГБ (как SDK).
-FROM mcr/microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 # Создаем рабочую папку в новом чистом контейнере
 WORKDIR /app
 
