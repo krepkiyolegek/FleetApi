@@ -66,6 +66,26 @@ var app = builder.Build();
 // --- ЧАСТЬ 2: НАСТРОЙКА КОНВЕЙЕРА ЗАПРОСОВ (Middlewares / Проходная) ---
 // Порядок строк здесь КРИТИЧЕСКИ ВАЖЕН! Запрос проходит их сверху вниз.
 
+// --- СТАРТ БЛОКА АВТОМАТИЧЕСКОЙ МИГРАЦИИ ---
+// Создаем временную область видимости (scope) для получения сервисов
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // Достаем наш контекст базы данных
+        var context = services.GetRequiredService<AppDbContext>();
+        // Команда Migrate() делает то же самое, что и 'dotnet ef database update',
+        // но выполняется самим приложением внутри Docker-контейнера.
+        context.Database.Migrate(); 
+        Console.WriteLine("Миграции успешно применены к базе данных.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Ошибка при применении миграций: {ex.Message}");
+    }
+}
+
 // БЕЗОПАСНОСТЬ: Если мы запускаем код на локальном компе (Development)
 if (app.Environment.IsDevelopment())
 {

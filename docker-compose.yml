@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  fleet-db:
+    image: postgres:15-alpine
+    container_name: fleet_postgres
+    environment:
+      POSTGRES_USER: postgres
+      # БЕЗОПАСНОСТЬ: Берем пароль из скрытого файла .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: fleet_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  fleet-api:
+    image: krepkiyolegek/fleet-api:latest 
+    container_name: fleet_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fleet-db
+    environment:
+      # БЕЗОПАСНОСТЬ: Формируем строку подключения, используя переменную
+      ConnectionStrings__DefaultConnection: "Host=fleet-db;Database=fleet_db;Username=postgres;Password=${DB_PASSWORD}"
+      # БЕЗОПАСНОСТЬ: Подтягиваем ключ JWT
+      Jwt__Key: "${JWT_SECRET_KEY}"
+      Jwt__Issuer: "FleetApi"
+
+volumes:
+  pgdata:
