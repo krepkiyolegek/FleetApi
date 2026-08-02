@@ -27,6 +27,15 @@ services:
       # БЕЗОПАСНОСТЬ: Подтягиваем ключ JWT
       Jwt__Key: "${JWT_SECRET_KEY}"
       Jwt__Issuer: "FleetApi"
+      ASPNETCORE_ENVIRONMENT: "Development"
+
+  fleet-frontend:
+    image: krepkiyolegek/fleet-frontend:latest
+    container_name: fleet_frontend
+    ports:
+      - "3000:80" # Внешний порт 3000 перенаправляется на 80 внутри Nginx
+    depends_on:
+      - fleet-api
 
 volumes:
   pgdata:

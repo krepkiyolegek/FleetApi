@@ -25,12 +25,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 4. Собираем и отправляем (Обновлено до v6)
-      - name: Build and push Docker image
+      # 4. Сборка Backend
+      - name: Build and push Backend image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          # ВНИМАНИЕ: Я увидел на скрине твой ник, поэтому вписал его.
-          # НО если в самом Docker Hub у тебя другой логин — поменяй krepkiyolegek на него!
-          tags: krepkiyolegek/fleet-api:latest
+          tags: krepkiyolegek/fleet-api:latest 
+
+      # 5. Сборка Frontend
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: krepkiyolegek/fleet-frontend:latest
